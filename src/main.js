@@ -1,7 +1,7 @@
 // src/main.js
 import { createApp } from 'vue';
 // 修正大小写敏感的文件导入路径
-import App from './app.vue';
+import App from './App.vue';
 import router from './router/router';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
