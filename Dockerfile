@@ -25,8 +25,13 @@ RUN apk add --no-cache gettext
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
-# 默认端口（Render 会注入 PORT 变量覆盖）
-ENV PORT=80
-EXPOSE 80
+# 启动脚本：生成 Nginx 配置并启动服务
+COPY start-nginx.sh /start-nginx.sh
+RUN chmod +x /start-nginx.sh
 
-CMD sh -c "envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+# 默认端口（Render 会注入 PORT 变量覆盖）
+ENV PORT=8080
+EXPOSE 8080
+
+# 使用自定义启动脚本，保证正确的模板替换与启动
+ENTRYPOINT ["/start-nginx.sh"]
