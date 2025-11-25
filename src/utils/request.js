@@ -4,9 +4,16 @@ import { ElMessage } from 'element-plus';          // 若你用 ElementPlus
 // import { Message } from '@arco-design/web-vue'; // 若用 Arco
 // import { message } from 'ant-design-vue';       // 若用 AntD
 
+// 统一从环境变量读取后端 API 根地址
+// Render/生产环境在构建阶段通过 Docker Build Args 注入 VITE_BASE_API
+// 开发环境则默认使用本地后端
+const apiBase = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_BASE_API)
+  ? import.meta.env.VITE_BASE_API
+  : 'http://localhost:8080';
+
 // 创建实例
 const request = axios.create({
-  baseURL: 'http://localhost:8080' || '/api', // 在 .env 里配 VITE_BASE_API
+  baseURL: apiBase,
   timeout: 10000,                                   // 10s 超时
   headers: { 'Content-Type': 'application/json;charset=UTF-8' }
 });
