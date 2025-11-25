@@ -24,6 +24,7 @@ RUN apk add --no-cache gettext
 
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY runtime-config.js.template /usr/share/nginx/html/runtime-config.js.template
 
 # 启动脚本：生成 Nginx 配置并启动服务
 COPY start-nginx.sh /start-nginx.sh
