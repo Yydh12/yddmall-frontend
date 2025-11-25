@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 
 # ---- Build stage ----
-FROM node:18-alpine AS build
+# Vite 7 与 @vitejs/plugin-vue 6 要求 Node >= 20.19 或 >= 22.12
+# 使用 Node 22 来满足引擎要求，避免 EBADENGINE 警告/错误
+FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
@@ -28,4 +30,3 @@ ENV PORT=80
 EXPOSE 80
 
 CMD sh -c "envsubst < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
-
