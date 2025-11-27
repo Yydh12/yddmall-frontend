@@ -31,7 +31,7 @@
             </div>
             
             <div class="item-image">
-              <img :src="item.productImage || `https://picsum.photos/80/80?random=${item.cartId}`" 
+              <img :src="imageSrc(item)" 
                    :alt="item.productName" 
                    @error="handleImageError">
             </div>
@@ -130,6 +130,20 @@ import avatarUrl from '@/assets/images/avatar.png';
 
 const router = useRouter();
 const cartItems = ref([]);
+
+const toAbsoluteUrl = (u) => {
+  const s = String(u || '').trim();
+  if (!s) return '';
+  if (/^https?:\/\//i.test(s) || s.startsWith('data:')) return s;
+  const base = axios.defaults.baseURL || '';
+  return `${base}${s.startsWith('/') ? '' : '/'}${s}`;
+};
+
+const imageSrc = (item) => {
+  const src = item?.productImage;
+  if (!src) return `https://picsum.photos/80/80?random=${item?.cartId ?? Math.random()}`;
+  return toAbsoluteUrl(src);
+};
 
 // 后端通过会话识别用户，前端不传递 userId
 

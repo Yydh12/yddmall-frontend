@@ -65,7 +65,7 @@
         
         <div class="product-list">
           <div class="product-item" v-for="item in cartItems" :key="item.itemId + '-' + item.skuId">
-            <img :src="item.productImage" :alt="item.productName" class="product-image">
+            <img :src="imageSrc(item)" :alt="item.productName" class="product-image" @error="onImageError">
             <div class="product-info">
               <div class="product-name">{{ item.productName }}</div>
               <div class="product-sku">{{ item.skuName }}</div>
@@ -245,6 +245,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import axios from '../axios'
 import { getAddresses, addAddress, setDefaultAddress as setDefaultAddressApi, updateAddress } from '@/api/address'
 import { createOrder, createDirectOrder } from '@/api/order'
 import AddressPicker from '@/components/Common/AddressPicker.vue'
@@ -275,6 +276,26 @@ export default {
     const selectedAddressId = ref(null)
     const selectedAddressDefault = ref(0) // 标记选中地址是否为默认（1：是，0：否）
     const cartItems = ref([])
+
+    const toAbsoluteUrl = (u) => {
+      const s = String(u || '').trim()
+      if (!s) return ''
+      if (/^https?:\/\//i.test(s) || s.startsWith('data:')) return s
+      const base = axios.defaults.baseURL || ''
+      return `${base}${s.startsWith('/') ? '' : '/'}${s}`
+    }
+
+    const imageSrc = (item) => {
+      const src = item?.productImage
+      const abs = toAbsoluteUrl(src)
+      return abs || ''
+    }
+
+    const onImageError = (e) => {
+      if (e && e.target) {
+        e.target.src = 'https://via.placeholder.com/80x80?text=No+Image'
+      }
+    }
     const buyerMessage = ref('')
     const freightAmount = ref(0)
     // 折扣选择相关
