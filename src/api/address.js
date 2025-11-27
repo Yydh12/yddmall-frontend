@@ -40,7 +40,7 @@ export function addAddress(data) {
  */
 export function setDefaultAddress(addressId) {
   return request({
-    url: `/address/default/${addressId}`,
+    url: `/address/setDefault/${addressId}`,
     method: 'post'
   });
 }

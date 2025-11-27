@@ -3,7 +3,7 @@
     <!-- 用户信息区域 -->
     <div class="user-info">
       <div class="avatar-container">
-        <img class="avatar" :src="user.avatar || defaultAvatar" alt="用户头像" />
+        <img class="avatar" :src="avatarSrc" alt="用户头像" />
         <span class="online-indicator"></span>
       </div>
       <div class="details">
@@ -109,12 +109,26 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from '../../axios';
 import { cartUtils } from '@/utils/cart';
 import { getOrderStatistics } from '@/api/order';
 import { listAvailableCoupons, claimCoupon, getCoinWallet, dailySignIn, getDiscountStats, listMyRedPacketsFiltered } from '@/api/discount';
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 const defaultAvatar = 'https://picsum.photos/200/200?random=1';
+
+const toAbsoluteUrl = (u) => {
+  const s = String(u || '').trim();
+  if (!s) return '';
+  if (/^https?:\/\//i.test(s) || s.startsWith('data:')) return s;
+  const base = axios.defaults.baseURL || '';
+  return `${base}${s.startsWith('/') ? '' : '/'}${s}`;
+};
+const avatarSrc = computed(() => {
+  const src = user?.avatar;
+  const abs = toAbsoluteUrl(src);
+  return abs || defaultAvatar;
+});
 
 const router = useRouter();
 const cartCount = ref(0);
